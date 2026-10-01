@@ -103,14 +103,24 @@ jobs:
           cd openwrt
           ./scripts/feeds install -a
 
-      - name: Add Argon theme packages
+      - name: Add Argon theme and PassWall packages
         run: |
           git clone --depth=1 https://github.com/jerrykuku/luci-theme-argon.git openwrt/package/luci-theme-argon
           git clone --depth=1 https://github.com/jerrykuku/luci-app-argon-config.git openwrt/package/luci-app-argon-config
+          if [ "${{ env.INCLUDE_PASSWALL }}" = "true" ]; then
+            echo "Adding PassWall source packages..."
+            git clone --depth=1 https://github.com/Openwrt-Passwall/openwrt-passwall.git openwrt/package/openwrt-passwall
+            git clone --depth=1 https://github.com/Openwrt-Passwall/openwrt-passwall-packages.git openwrt/package/openwrt-passwall-packages
+          fi
 
       - name: Load custom configuration
         run: |
           cp "$GITHUB_WORKSPACE/$CONFIG_FILE" openwrt/.config
+          if [ "${{ env.INCLUDE_PASSWALL }}" != "true" ]; then
+            sed -i '/CONFIG_PACKAGE_.*passwall/d' openwrt/.config
+            sed -i '/CONFIG_PACKAGE_sing-box/d' openwrt/.config
+            sed -i '/CONFIG_PACKAGE_chinadns-ng/d' openwrt/.config
+          fi
           cd openwrt
           make defconfig
           echo "=== diffconfig ==="
@@ -131,44 +141,12 @@ jobs:
           find dl -size -1024c -exec ls -l {} \;
           find dl -size -1024c -exec rm -f {} \;
 
-      - name: Build firmware base
+      - name: Build firmware
         run: |
           cd openwrt
           echo "Starting firmware build using $(nproc) threads..."
           make -j"$(nproc)" || make -j1 V=s
 
-      - name: Pre-install PassWall and Sing-Box
-        if: ${{ env.INCLUDE_PASSWALL == 'true' }}
-        run: |
-          echo "Fetching PassWall & Sing-Box packages from SourceForge..."
-          python3 "$GITHUB_WORKSPACE/scripts/fetch_passwall_packages.py" \
-            --output-dir /tmp/passwall_pkgs \
-            --arch aarch64_cortex-a53 \
-            --release packages-25.12
-
-          TARGET_ROOT="$(find openwrt/build_dir -maxdepth 3 -type d -name "root-mediatek" | head -n 1)"
-          if [ -z "$TARGET_ROOT" ]; then
-            TARGET_ROOT="$(find openwrt/build_dir -maxdepth 3 -type d -name "root-*" | head -n 1)"
-          fi
-
-          HOST_APK="$(find openwrt/staging_dir/host -type f -name "apk" -perm -111 | head -n 1)"
-          if [ -z "$HOST_APK" ]; then
-            HOST_APK="openwrt/staging_dir/host/bin/apk"
-          fi
-
-          echo "Using host apk tool: $HOST_APK"
-          echo "Target root directory: $TARGET_ROOT"
-
-          if [ -d "$TARGET_ROOT" ] && [ -x "$HOST_APK" ]; then
-            echo "Installing PassWall packages into rootfs..."
-            "$HOST_APK" --root "$TARGET_ROOT" --allow-untrusted --no-scripts add /tmp/passwall_pkgs/*.apk
-            echo "Rebuilding target firmware image with integrated packages..."
-            cd openwrt
-            make target/linux/install -j"$(nproc)" || make target/linux/install -j1 V=s
-          else
-            echo "Target root or host apk not found, skipping rootfs injection."
-            exit 1
-          fi
 
       - name: Organize artifacts
         run: |

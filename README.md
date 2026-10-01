@@ -12,19 +12,17 @@
 * **LuCI Web 管理界面与 Argon 现代化主题**：
   * 完整集成 LuCI 控制面板及中文语言包。
   * 内置流行的 **`luci-theme-argon`** 现代化毛玻璃主题以及 **`luci-app-argon-config`** 主题个性化配置插件（支持深色模式、自定义登录壁纸、毛玻璃特效等）。
-* **PassWall + Sing-Box 预装集成**：
-  * 基于 [openwrt-passwall-build](https://sourceforge.net/projects/openwrt-passwall-build/) 官方预编译仓库（针对 `aarch64_cortex-a53` 架构与 OpenWrt 25.12 APK 系统特别优化）。
+* **PassWall + Sing-Box 原生源码集成内置**：
+  * 直接集成官方 [openwrt-passwall](https://github.com/Openwrt-Passwall/openwrt-passwall) 与 [openwrt-passwall-packages](https://github.com/Openwrt-Passwall/openwrt-passwall-packages) 源码进行原生交叉编译，与固件系统完全融为一体。
   * 固件出厂即预装：
-    * `luci-app-passwall` + `luci-i18n-passwall-zh-cn`（中文控制台）
-    * `sing-box`（核心核心引擎）
-    * `chinadns-ng`（智能国内国外分流）
-    * `xray-core`（Xray 核心）
-    * `dns2socks`、`tcping`、`v2ray-geosite`、`v2ray-geoip`（分流规则库）
+    * `luci-app-passwall` + `luci-i18n-passwall-zh-cn`（中文管理界面）
+    * `sing-box`（高性能代理核心）
+    * `chinadns-ng`（智能国内/海外 DNS 分流）
+    * `dns2socks`、`tcping`、`v2ray-geodata`（GeoIP / GeoSite 规则库）
   * 内核已完整编译并集成 `kmod-nft-tproxy`、`kmod-ipt-tproxy`、`kmod-tun`、`ipset`、`iptables` 等全部转发与透明代理底层驱动。
 * **开箱即用 APK 软件源与公钥预置**：
-  * 固件默认预置 `/etc/apk/keys/openwrt-passwall-build.pem` 签名公钥。
-  * 固件默认配置 `/etc/apk/repositories.d/passwall.list` 软件源。
-  * 刷机启动后，可直接在 Web 界面或终端使用 `apk add` / `apk update` 随时增减或更新组件，无需手动寻找密钥或改写源。
+  * 固件同时预置了 `/etc/apk/keys/openwrt-passwall-build.pem` 签名公钥与 `/etc/apk/repositories.d/passwall.list` 在线软件源。
+  * 刷机启动后，也可以直接通过 Web 界面或终端 `apk add` / `apk update` 在线安装或更新其他组件（如 Xray、Hysteria 等），无需手动配置密钥。
 
 ---
 
