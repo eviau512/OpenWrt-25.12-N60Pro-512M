@@ -9,6 +9,9 @@
 * **完整版 `wpad`（基于 OpenSSL）**：
   * 替换默认精简版 `wpad-basic-mbedtls`，改用全功能 `wpad`。
   * 完整支持 **802.11s Mesh 组网**、**802.11k/v/r 无缝快速漫游**、**WPA3-Personal (SAE) / WPA3-Enterprise**。
+* **LuCI Web 管理界面与 Argon 现代化主题**：
+  * 完整集成 LuCI 控制面板及中文语言包。
+  * 内置流行的 **`luci-theme-argon`** 现代化毛玻璃主题以及 **`luci-app-argon-config`** 主题个性化配置插件（支持深色模式、自定义登录壁纸、毛玻璃特效等）。
 * **PassWall + Sing-Box 预装集成**：
   * 基于 [openwrt-passwall-build](https://sourceforge.net/projects/openwrt-passwall-build/) 官方预编译仓库（针对 `aarch64_cortex-a53` 架构与 OpenWrt 25.12 APK 系统特别优化）。
   * 固件出厂即预装：

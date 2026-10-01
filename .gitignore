@@ -10,3 +10,4 @@ tmp/
 *.orig
 *.rej
 *.log
+passwall_pkgs/

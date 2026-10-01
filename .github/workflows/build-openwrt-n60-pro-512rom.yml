@@ -103,6 +103,11 @@ jobs:
           cd openwrt
           ./scripts/feeds install -a
 
+      - name: Add Argon theme packages
+        run: |
+          git clone --depth=1 https://github.com/jerrykuku/luci-theme-argon.git openwrt/package/luci-theme-argon
+          git clone --depth=1 https://github.com/jerrykuku/luci-app-argon-config.git openwrt/package/luci-app-argon-config
+
       - name: Load custom configuration
         run: |
           cp "$GITHUB_WORKSPACE/$CONFIG_FILE" openwrt/.config
