@@ -1,0 +1,12 @@
+openwrt/
+bin/
+dl/
+feeds/
+build_dir/
+staging_dir/
+tmp/
+.config
+.config.old
+*.orig
+*.rej
+*.log
