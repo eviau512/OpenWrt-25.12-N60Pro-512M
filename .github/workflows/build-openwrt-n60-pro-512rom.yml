@@ -106,7 +106,6 @@ jobs:
       - name: Add Argon theme and PassWall packages
         run: |
           git clone --depth=1 https://github.com/jerrykuku/luci-theme-argon.git openwrt/package/luci-theme-argon
-          git clone --depth=1 https://github.com/jerrykuku/luci-app-argon-config.git openwrt/package/luci-app-argon-config
           if [ "${{ env.INCLUDE_PASSWALL }}" = "true" ]; then
             echo "Adding PassWall source packages..."
             git clone --depth=1 https://github.com/Openwrt-Passwall/openwrt-passwall.git openwrt/package/openwrt-passwall

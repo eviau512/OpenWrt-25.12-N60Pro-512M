@@ -11,7 +11,7 @@
   * 完整支持 **802.11s Mesh 组网**、**802.11k/v/r 无缝快速漫游**、**WPA3-Personal (SAE) / WPA3-Enterprise**。
 * **LuCI Web 管理界面与 Argon 现代化主题**：
   * 完整集成 LuCI 控制面板及中文语言包。
-  * 内置流行的 **`luci-theme-argon`** 现代化毛玻璃主题以及 **`luci-app-argon-config`** 主题个性化配置插件（支持深色模式、自定义登录壁纸、毛玻璃特效等）。
+  * 内置流行的 **`luci-theme-argon`** 现代化毛玻璃主题，提供优秀的高清显示与视觉体验。
 * **PassWall + Sing-Box 原生源码集成内置**：
   * 直接集成官方 [openwrt-passwall](https://github.com/Openwrt-Passwall/openwrt-passwall) 与 [openwrt-passwall-packages](https://github.com/Openwrt-Passwall/openwrt-passwall-packages) 源码进行原生交叉编译，与固件系统完全融为一体。
   * 固件出厂即预装：
