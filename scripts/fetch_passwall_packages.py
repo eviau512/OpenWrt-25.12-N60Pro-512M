@@ -30,14 +30,12 @@ def fetch_feed_file_links(feed, arch="aarch64_cortex-a53", release="packages-25.
             print(f"[INFO] Fetching index for {feed} (attempt {attempt}/{retries})...")
             with urllib.request.urlopen(req, timeout=20) as resp:
                 html = resp.read().decode("utf-8", errors="ignore")
-                matches = re.findall(r'\"download_url\":\s*\"([^\"]+)\"', html)
+                matches = re.findall(r'\"name\":\s*\"([^\"]+\.apk)\"', html)
                 links = {}
-                for durl in matches:
-                    parts = durl.strip().split("/")
-                    # Usually: .../<filename>/download
-                    fname = parts[-2] if parts[-1] == "download" else parts[-1]
-                    if fname.endswith(".apk"):
-                        links[fname] = durl
+                for fname in matches:
+                    # Use direct downloads.sourceforge.net URL for non-browser HTTP clients
+                    direct_url = f"https://downloads.sourceforge.net/project/openwrt-passwall-build/releases/{release}/{arch}/{feed}/{fname}"
+                    links[fname] = direct_url
                 return links
         except Exception as e:
             print(f"[WARN] Error fetching {url}: {e}", file=sys.stderr)
@@ -46,22 +44,30 @@ def fetch_feed_file_links(feed, arch="aarch64_cortex-a53", release="packages-25.
     return {}
 
 def download_file(url, out_path, retries=3):
-    headers = {"User-Agent": "curl/7.81.0"}
+    headers = {"User-Agent": "Wget/1.21.2"}
     req = urllib.request.Request(url, headers=headers)
     for attempt in range(1, retries + 1):
         try:
             print(f"[INFO] Downloading {os.path.basename(out_path)} from {url}...")
             with urllib.request.urlopen(req, timeout=60) as resp, open(out_path, "wb") as out_f:
                 total_bytes = 0
+                first_chunk = True
                 while True:
                     chunk = resp.read(65536)
                     if not chunk:
                         break
+                    if first_chunk:
+                        # Check for HTML error/redirect response
+                        if chunk.startswith(b"<html>") or chunk.startswith(b"<!DOCTYPE"):
+                            raise ValueError(f"Server returned HTML page instead of binary package: {chunk[:100]}")
+                        first_chunk = False
                     out_f.write(chunk)
                     total_bytes += len(chunk)
-            if total_bytes > 0:
+            if total_bytes > 1024:
                 print(f"[OK] Saved {os.path.basename(out_path)} ({total_bytes} bytes)")
                 return True
+            else:
+                raise ValueError(f"Downloaded file too small: {total_bytes} bytes")
         except Exception as e:
             print(f"[WARN] Download attempt {attempt} failed: {e}", file=sys.stderr)
             if os.path.exists(out_path):
