@@ -8,6 +8,11 @@ on:
         required: true
         default: "v25.12.5"
         type: string
+      include_passwall:
+        description: "Pre-install PassWall + Sing-Box from SourceForge"
+        required: false
+        default: true
+        type: boolean
   push:
     branches:
       - main
@@ -15,7 +20,9 @@ on:
     paths:
       - ".github/workflows/**"
       - "configs/**"
+      - "files/**"
       - "patches/**"
+      - "scripts/**"
       - "README.md"
 
 concurrency:
@@ -25,6 +32,7 @@ concurrency:
 env:
   OPENWRT_REPO: https://github.com/openwrt/openwrt.git
   OPENWRT_REF: ${{ github.event.inputs.openwrt_ref || 'v25.12.5' }}
+  INCLUDE_PASSWALL: ${{ github.event.inputs.include_passwall != 'false' }}
   CONFIG_FILE: configs/netcore_n60-pro-512rom.config
   PATCH_FILE: patches/0001-mediatek-filogic-add-netcore-n60-pro-512rom.patch
   TZ: Asia/Shanghai
@@ -103,6 +111,14 @@ jobs:
           echo "=== diffconfig ==="
           ./scripts/diffconfig.sh || true
 
+      - name: Copy rootfs overlay files
+        run: |
+          if [ -d "$GITHUB_WORKSPACE/files" ]; then
+            echo "Copying custom rootfs files into openwrt/files/..."
+            mkdir -p openwrt/files
+            cp -r "$GITHUB_WORKSPACE/files/." openwrt/files/
+          fi
+
       - name: Download package sources
         run: |
           cd openwrt
@@ -110,18 +126,51 @@ jobs:
           find dl -size -1024c -exec ls -l {} \;
           find dl -size -1024c -exec rm -f {} \;
 
-      - name: Build firmware
+      - name: Build firmware base
         run: |
           cd openwrt
           echo "Starting firmware build using $(nproc) threads..."
           make -j"$(nproc)" || make -j1 V=s
-          echo "FILE_DATE=$(date +%Y%m%d%H%M)" >> "$GITHUB_ENV"
+
+      - name: Pre-install PassWall and Sing-Box
+        if: ${{ env.INCLUDE_PASSWALL == 'true' }}
+        run: |
+          echo "Fetching PassWall & Sing-Box packages from SourceForge..."
+          python3 "$GITHUB_WORKSPACE/scripts/fetch_passwall_packages.py" \
+            --output-dir /tmp/passwall_pkgs \
+            --arch aarch64_cortex-a53 \
+            --release packages-25.12
+
+          TARGET_ROOT="$(find openwrt/build_dir -maxdepth 3 -type d -name "root-mediatek" | head -n 1)"
+          if [ -z "$TARGET_ROOT" ]; then
+            TARGET_ROOT="$(find openwrt/build_dir -maxdepth 3 -type d -name "root-*" | head -n 1)"
+          fi
+
+          HOST_APK="$(find openwrt/staging_dir/host -type f -name "apk" -perm -111 | head -n 1)"
+          if [ -z "$HOST_APK" ]; then
+            HOST_APK="openwrt/staging_dir/host/bin/apk"
+          fi
+
+          echo "Using host apk tool: $HOST_APK"
+          echo "Target root directory: $TARGET_ROOT"
+
+          if [ -d "$TARGET_ROOT" ] && [ -x "$HOST_APK" ]; then
+            echo "Installing PassWall packages into rootfs..."
+            "$HOST_APK" --root "$TARGET_ROOT" --allow-untrusted --no-scripts add /tmp/passwall_pkgs/*.apk
+            echo "Rebuilding target firmware image with integrated packages..."
+            cd openwrt
+            make target/linux/install -j"$(nproc)" || make target/linux/install -j1 V=s
+          else
+            echo "Target root or host apk not found, skipping rootfs injection."
+            exit 1
+          fi
 
       - name: Organize artifacts
         run: |
           cd openwrt/bin/targets/*/*
           rm -rf packages
           echo "FIRMWARE_DIR=$PWD" >> "$GITHUB_ENV"
+          echo "FILE_DATE=$(date +%Y%m%d%H%M)" >> "$GITHUB_ENV"
           echo "=== Generated artifacts ==="
           ls -lh "$PWD"
 

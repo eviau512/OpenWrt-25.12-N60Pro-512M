@@ -1,6 +1,27 @@
 # Build N60 Pro 512M (OpenWrt 25.12.x 适配版)
 
-本项目用于通过 GitHub Actions 云端编译磊科 **Netcore N60 Pro**（硬件改装 **512MB SPI-NAND**）的官方 OpenWrt **v25.12.x**（包括 `v25.12.1`、`v25.12.2`、`v25.12.3`、`v25.12.4`、`v25.12.5` 以及 `openwrt-25.12` 分支最新代码）固件。
+本项目用于通过 GitHub Actions 云端编译磊科 **Netcore N60 Pro**（硬件改装 **512MB SPI-NAND**）的官方 OpenWrt **v25.12.x**（兼容 `v25.12.1`、`v25.12.2`、`v25.12.3`、`v25.12.4`、`v25.12.5` 以及 `openwrt-25.12` 稳定分支）固件。
+
+---
+
+## 🌟 固件内置特性与预装软件
+
+* **完整版 `wpad`（基于 OpenSSL）**：
+  * 替换默认精简版 `wpad-basic-mbedtls`，改用全功能 `wpad`。
+  * 完整支持 **802.11s Mesh 组网**、**802.11k/v/r 无缝快速漫游**、**WPA3-Personal (SAE) / WPA3-Enterprise**。
+* **PassWall + Sing-Box 预装集成**：
+  * 基于 [openwrt-passwall-build](https://sourceforge.net/projects/openwrt-passwall-build/) 官方预编译仓库（针对 `aarch64_cortex-a53` 架构与 OpenWrt 25.12 APK 系统特别优化）。
+  * 固件出厂即预装：
+    * `luci-app-passwall` + `luci-i18n-passwall-zh-cn`（中文控制台）
+    * `sing-box`（核心核心引擎）
+    * `chinadns-ng`（智能国内国外分流）
+    * `xray-core`（Xray 核心）
+    * `dns2socks`、`tcping`、`v2ray-geosite`、`v2ray-geoip`（分流规则库）
+  * 内核已完整编译并集成 `kmod-nft-tproxy`、`kmod-ipt-tproxy`、`kmod-tun`、`ipset`、`iptables` 等全部转发与透明代理底层驱动。
+* **开箱即用 APK 软件源与公钥预置**：
+  * 固件默认预置 `/etc/apk/keys/openwrt-passwall-build.pem` 签名公钥。
+  * 固件默认配置 `/etc/apk/repositories.d/passwall.list` 软件源。
+  * 刷机启动后，可直接在 Web 界面或终端使用 `apk add` / `apk update` 随时增减或更新组件，无需手动寻找密钥或改写源。
 
 ---
 
@@ -33,14 +54,9 @@
 
 4. **完整适配基础配置脚本**：
    * `01_leds`：正常驱动电源灯、网络灯与状态指示灯。
-   * `02_network`：正确绑定 4 个 LAN 口与 1 个 2.5G WAN 口（eth1）。
+   * `02_network`：正确绑定 4 个千兆 LAN 口与 1 个 2.5G WAN 口（eth1）。
    * `11_fix_wifi_mac`：正确计算并分配无线物理网卡 MAC 地址。
    * `platform.sh`：正确注册固件升级校验与刷写逻辑。
-
-5. **配置与工作流优化**：
-   * 工作流支持手动触发时选择任意 tag/分支（默认 `v25.12.5`）。
-   * 软件源更新增加自动重试逻辑，防止因网络抖动中断。
-   * 配置默认启用完整版 `wpad-mbedtls`（支持 802.11s Mesh 与 802.11k/v/r 漫游）。
 
 ---
 
@@ -53,8 +69,14 @@
 │   └── build-openwrt-n60-pro-512rom.yml   # 自动化云编译工作流
 ├── configs/
 │   └── netcore_n60-pro-512rom.config     # 512M 机型专属 .config 配置文件
+├── files/                                # 预置进固件 rootfs 的系统文件
+│   └── etc/apk/
+│       ├── keys/openwrt-passwall-build.pem
+│       └── repositories.d/passwall.list
 ├── patches/
 │   └── 0001-mediatek-filogic-add-netcore-n60-pro-512rom.patch # 25.12.x 通用适配补丁
+├── scripts/
+│   └── fetch_passwall_packages.py        # 自动抓取并校验 PassWall 预编译包
 └── README.md
 ```
 
@@ -64,14 +86,15 @@
 2. 进入仓库页面的 **Actions** 选项卡。
 3. 在左侧选择 **`build-openwrt-n60-pro-512rom`**。
 4. 点击右侧 **Run workflow**：
-   * 可保持默认 `v25.12.5`，或手动输入其他支持的版本（例如 `v25.12.3`、`v25.12.4` 或分支 `openwrt-25.12`）。
-5. 编译完成后，在 Actions 运行结果的 **Artifacts** 处下载固件包。
+   * `OpenWrt Git Tag or Branch to build`：可保持默认 `v25.12.5`，或手动输入任意版本（如 `v25.12.3`、`v25.12.4` 或分支 `openwrt-25.12`）。
+   * `Pre-install PassWall + Sing-Box from SourceForge`：默认勾选（设置为 `true`），直接把 PassWall + Sing-Box 预装进固件。
+5. 编译完成后，在 Actions 运行结果的 **Artifacts** 处下载固件压缩包。
 
 ### 3. 生成的固件说明
 
 | 文件名格式 | 用途说明 |
 | :--- | :--- |
-| `*-squashfs-sysupgrade.itb` | **日常升级固件**（在 OpenWrt Web 页面或 U-Boot 中直接刷入） |
+| `*-squashfs-sysupgrade.itb` | **日常升级固件**（在 OpenWrt Web 页面或 U-Boot 网页控制台直接刷入） |
 | `*-initramfs-recovery.itb` | **救援/救砖镜像**（供 TFTP 网络恢复时引导启动） |
 | `*-preloader.bin` | MT7986 DDR4 SPI-NAND BL2 引导程序 |
 | `*-bl31-uboot.fip` | MT7986 ATF BL31 + U-Boot FIP 固件 |
