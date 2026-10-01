@@ -111,6 +111,7 @@ jobs:
             echo "Adding PassWall source packages..."
             git clone --depth=1 https://github.com/Openwrt-Passwall/openwrt-passwall.git openwrt/package/openwrt-passwall
             git clone --depth=1 https://github.com/Openwrt-Passwall/openwrt-passwall-packages.git openwrt/package/openwrt-passwall-packages
+            rm -rf openwrt/package/openwrt-passwall-packages/{shadowsocks-rust,shadowsocksr-libev,xray-core,xray-plugin,v2ray-plugin,simple-obfs,hysteria,naiveproxy,shadow-tls}
           fi
 
       - name: Load custom configuration
