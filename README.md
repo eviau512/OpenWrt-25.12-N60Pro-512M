@@ -12,7 +12,7 @@ OpenWrt 25.12.x firmware build support for Netcore N60 Pro routers modded with 5
 - **Wireless**: Full OpenSSL-based `wpad` replacing `wpad-basic-mbedtls`, supporting 802.11s mesh, 802.11k/v/r fast roaming, and WPA3 Personal/Enterprise.
 - **Web Interface**: LuCI with `luci-theme-argon` and Simplified Chinese language pack (`CONFIG_LUCI_LANG_zh_Hans`).
 - **Proxy Services**: PassWall with Sing-Box core (`sing-box`, `chinadns-ng`, `dns2socks`, `tcping`, `v2ray-geodata`). Non-essential engines (Rust, Xray, Shadowsocks) are excluded to minimize build time and image size.
-- **VPN & Networking**: Built-in WireGuard (`kmod-wireguard`, `luci-proto-wireguard`) and Tailscale snapshot (v1.102.3, Taildrop enabled).
+- **VPN & Networking**: Built-in WireGuard (`kmod-wireguard`, `wireguard-tools`) and Tailscale snapshot (v1.102.3, Taildrop enabled).
 - **USB & Printing**: Built-in `kmod-usb-printer` and `p910nd` print server with LuCI management interface.
 - **Official kmod Compatibility**: Kernel vermagic is synchronized with the official OpenWrt 25.12.5 release (`5a6c1f71be683ae9980b15d3ce73e24d`), allowing official `kmod-*` packages to be installed directly via `apk add`. Official kmods repository is pre-configured.
 
