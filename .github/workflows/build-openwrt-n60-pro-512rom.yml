@@ -112,6 +112,13 @@ jobs:
             git clone --depth=1 https://github.com/Openwrt-Passwall/openwrt-passwall-packages.git openwrt/package/openwrt-passwall-packages
             rm -rf openwrt/package/openwrt-passwall-packages/{shadowsocks-rust,shadowsocksr-libev,xray-core,xray-plugin,v2ray-plugin,simple-obfs,hysteria,naiveproxy,shadow-tls}
           fi
+          if [ -d "$GITHUB_WORKSPACE/packages/tailscale" ]; then
+            echo "Adding Tailscale snapshot package..."
+            cp -r "$GITHUB_WORKSPACE/packages/tailscale" openwrt/package/tailscale
+          fi
+          if [ -f "$GITHUB_WORKSPACE/.vermagic" ]; then
+            cp "$GITHUB_WORKSPACE/.vermagic" openwrt/.vermagic
+          fi
 
       - name: Load custom configuration
         run: |

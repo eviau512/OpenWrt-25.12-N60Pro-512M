@@ -11,3 +11,4 @@ tmp/
 *.rej
 *.log
 passwall_pkgs/
+*.dl

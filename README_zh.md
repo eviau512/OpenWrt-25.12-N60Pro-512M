@@ -12,7 +12,9 @@
 - **无线组件**：预装完整版 `wpad`（基于 OpenSSL），替代精简版 `wpad-basic-mbedtls`，支持 802.11s Mesh、802.11k/v/r 快速漫游及 WPA3。
 - **管理界面**：集成 LuCI Web 控制面板、`luci-theme-argon` 主题及简体中文语言包。
 - **代理支持**：内置 PassWall 及 Sing-Box 核心（包含 `sing-box`、`chinadns-ng`、`dns2socks`、`tcping`、`v2ray-geodata`）。已排除 Rust、Xray、Shadowsocks 等额外组件以缩短构建时间并精简固件体积。
-- **包管理器**：预置 APK 签名公钥及软件源配置，便于后续通过 APK v3 在线更新组件。
+- **VPN 与组网**：内置 WireGuard（`kmod-wireguard`、`luci-proto-wireguard`）与 Tailscale snapshot 最新版（v1.102.3，已开启 Taildrop）。
+- **USB 与打印服务**：内置 `kmod-usb-printer` 驱动与 `p910nd` 网络打印机共享服务（附 LuCI 控制面板）。
+- **官方 kmod 驱动兼容**：内核 Vermagic 对齐官方 OpenWrt 25.12.5 发布哈希（`5a6c1f71be683ae9980b15d3ce73e24d`），预置官方 kmods 仓库，可直接使用 `apk add kmod-*` 在线安装任意官方内核驱动。
 
 ---
 
