@@ -9,7 +9,7 @@ OpenWrt 25.12.x firmware build support for Netcore N60 Pro routers modded with 5
 ## Features
 
 - **Flash Partitioning**: Configured for 512MB SPI-NAND with UBI partition allocated from `0x0580000` to `0x20000000` (506.5 MB), providing ~450MB+ persistent storage overlay.
-- **Wireless**: Full OpenSSL-based `wpad` replacing `wpad-basic-mbedtls`, supporting 802.11s mesh, 802.11k/v/r fast roaming, and WPA3 Personal/Enterprise.
+- **Wireless**: Full `wpad-mbedtls` replacing `wpad-basic-mbedtls`, supporting 802.11s mesh, 802.11k/v/r fast roaming, and WPA3 Personal (SAE) / Enterprise.
 - **Web Interface**: LuCI with `luci-theme-argon` and Simplified Chinese language pack (`CONFIG_LUCI_LANG_zh_Hans`).
 - **Proxy Services**: PassWall with Sing-Box core (`sing-box`, `chinadns-ng`, `dns2socks`, `tcping`, `v2ray-geodata`). Non-essential engines (Rust, Xray, Shadowsocks) are excluded to minimize build time and image size.
 - **VPN & Networking**: Built-in WireGuard (`kmod-wireguard`, `wireguard-tools`) and Tailscale snapshot (v1.102.3, Taildrop enabled).

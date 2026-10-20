@@ -9,7 +9,7 @@
 ## 固件特性
 
 - **闪存空间**：适配 512MB SPI-NAND，UBI 分区范围设为 `0x0580000` 至 `0x20000000`（506.5 MB），可用 Overlay 空间约 450MB+。
-- **无线组件**：预装完整版 `wpad`（基于 OpenSSL），替代精简版 `wpad-basic-mbedtls`，支持 802.11s Mesh、802.11k/v/r 快速漫游及 WPA3。
+- **无线组件**：预装完整版 `wpad-mbedtls`，替代精简版 `wpad-basic-mbedtls`，支持 802.11s Mesh、802.11k/v/r 快速漫游及 WPA3 个人版（SAE）/ 企业版。
 - **管理界面**：集成 LuCI Web 控制面板、`luci-theme-argon` 主题及简体中文语言包。
 - **代理支持**：内置 PassWall 及 Sing-Box 核心（包含 `sing-box`、`chinadns-ng`、`dns2socks`、`tcping`、`v2ray-geodata`）。已排除 Rust、Xray、Shadowsocks 等额外组件以缩短构建时间并精简固件体积。
 - **VPN 与组网**：内置 WireGuard（`kmod-wireguard`、`wireguard-tools`）与 Tailscale snapshot 最新版（v1.102.3，已开启 Taildrop）。
