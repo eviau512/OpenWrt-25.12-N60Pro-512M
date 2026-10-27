@@ -14,6 +14,7 @@ OpenWrt 25.12.x firmware build support for Netcore N60 Pro routers modded with 5
 - **Proxy Services**: PassWall with Sing-Box core (`sing-box`, `chinadns-ng`, `dns2socks`, `tcping`, `v2ray-geodata`). Non-essential engines (Rust, Xray, Shadowsocks) are excluded to minimize build time and image size.
 - **VPN & Networking**: Built-in WireGuard (`kmod-wireguard`, `wireguard-tools`) and Tailscale snapshot (v1.102.3, Taildrop enabled).
 - **USB & Printing**: Built-in `kmod-usb-printer` and `p910nd` print server with LuCI management interface.
+- **Bridge Offloading**: Pre-installed and auto-enabled `bridger` (eBPF/tc bridge datapath accelerator) for optimal wireless-to-wired bridge forwarding and WED offload in Dumb AP mode.
 - **Official kmod Compatibility**: Kernel vermagic is synchronized with the official OpenWrt 25.12.5 release (`5a6c1f71be683ae9980b15d3ce73e24d`), allowing official `kmod-*` packages to be installed directly via `apk add`. Official kmods repository is pre-configured.
 
 ---

@@ -54,7 +54,7 @@ jobs:
           sudo -E apt-get -qq update
           sudo -E apt-get -qq install \
             ack antlr3 asciidoc autoconf automake autopoint binutils bison build-essential \
-            bzip2 ccache clang cmake cpio curl device-tree-compiler ecj fastjar flex gawk \
+            bzip2 ccache clang llvm cmake cpio curl device-tree-compiler ecj fastjar flex gawk \
             gettext gcc-multilib g++-multilib git gperf haveged help2man intltool \
             lib32gcc-s1 libc6-dev-i386 libelf-dev libglib2.0-dev libgmp3-dev libltdl-dev \
             libmpc-dev libmpfr-dev libncurses5-dev libncursesw5-dev libpython3-dev \
@@ -119,6 +119,13 @@ jobs:
           if [ -f "$GITHUB_WORKSPACE/.vermagic" ]; then
             cp "$GITHUB_WORKSPACE/.vermagic" openwrt/.vermagic
           fi
+          mkdir -p openwrt/staging_dir/host/llvm-bpf/bin
+          ln -sf $(which clang) openwrt/staging_dir/host/llvm-bpf/bin/clang
+          ln -sf $(which llc) openwrt/staging_dir/host/llvm-bpf/bin/llc
+          ln -sf $(which llvm-dis) openwrt/staging_dir/host/llvm-bpf/bin/llvm-dis
+          ln -sf $(which opt) openwrt/staging_dir/host/llvm-bpf/bin/opt
+          ln -sf $(which llvm-strip) openwrt/staging_dir/host/llvm-bpf/bin/llvm-strip
+          clang -dumpversion | cut -d. -f1 > openwrt/staging_dir/host/llvm-bpf/.llvm-version
 
       - name: Load custom configuration
         run: |

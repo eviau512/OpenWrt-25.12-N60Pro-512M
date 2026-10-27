@@ -14,6 +14,7 @@
 - **代理支持**：内置 PassWall 及 Sing-Box 核心（包含 `sing-box`、`chinadns-ng`、`dns2socks`、`tcping`、`v2ray-geodata`）。已排除 Rust、Xray、Shadowsocks 等额外组件以缩短构建时间并精简固件体积。
 - **VPN 与组网**：内置 WireGuard（`kmod-wireguard`、`wireguard-tools`）与 Tailscale snapshot 最新版（v1.102.3，已开启 Taildrop）。
 - **USB 与打印服务**：内置 `kmod-usb-printer` 驱动与 `p910nd` 网络打印机共享服务（附 LuCI 控制面板）。
+- **网桥加速**：预装并默认启用 `bridger`（基于 eBPF/tc 的桥接数据流加速服务），优化有线/无线桥接转发效率并支持 Dumb AP 模式下的 WED 硬件加速。
 - **官方 kmod 驱动兼容**：内核 Vermagic 对齐官方 OpenWrt 25.12.5 发布哈希（`5a6c1f71be683ae9980b15d3ce73e24d`），预置官方 kmods 仓库，可直接使用 `apk add kmod-*` 在线安装任意官方内核驱动。
 
 ---
