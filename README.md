@@ -2,7 +2,7 @@
 
 [English](README.md) | [中文](README_zh.md)
 
-OpenWrt 25.12.x firmware build support for Netcore N60 Pro routers modded with 512MB SPI-NAND flash. Compatible with `v25.12.1`, `v25.12.2`, `v25.12.3`, `v25.12.4`, `v25.12.5`, and the `openwrt-25.12` maintenance branch.
+OpenWrt 25.12.x firmware build support for Netcore N60 Pro routers modded with 512MB SPI-NAND flash. Compatible with `v25.12.1`, `v25.12.2`, `v25.12.3`, `v25.12.4`, `v25.12.5`, `v25.12.6`, and the `openwrt-25.12` maintenance branch.
 
 ---
 
@@ -15,14 +15,14 @@ OpenWrt 25.12.x firmware build support for Netcore N60 Pro routers modded with 5
 - **VPN & Networking**: Built-in WireGuard (`kmod-wireguard`, `wireguard-tools`) and Tailscale snapshot (v1.102.3, Taildrop enabled).
 - **USB & Printing**: Built-in `kmod-usb-printer` and `p910nd` print server with LuCI management interface.
 - **Bridge Offloading**: Pre-installed and auto-enabled `bridger` (eBPF/tc bridge datapath accelerator) for optimal wireless-to-wired bridge forwarding and WED offload in Dumb AP mode.
-- **Official kmod Compatibility**: Kernel vermagic is synchronized with the official OpenWrt 25.12.5 release (`5a6c1f71be683ae9980b15d3ce73e24d`), allowing official `kmod-*` packages to be installed directly via `apk add`. Official kmods repository is pre-configured.
+- **Official kmod Compatibility**: Kernel vermagic is synchronized with the official OpenWrt 25.12.6 release (`f0a7348f9cb959e1bf4d0447669b031e`), allowing official `kmod-*` packages to be installed directly via `apk add`. Official kmods repository is pre-configured.
 
 ---
 
 ## Technical Notes
 
 ### Upstream Changes in 25.12.3+
-OpenWrt added new Filogic targets in `v25.12.3` through `v25.12.5`, causing line offset rejections in earlier patches (`0001-mediatek-filogic-add-netcore-n60-pro-512rom.patch`). The patch in this repository uses stable anchors (`netcore,n60` / `netcore,n60-pro`) across all 25.12 releases.
+OpenWrt added new Filogic targets in `v25.12.3` through `v25.12.6`, causing line offset rejections in earlier patches (`0001-mediatek-filogic-add-netcore-n60-pro-512rom.patch`). The patch in this repository uses stable anchors (`netcore,n60` / `netcore,n60-pro`) across all 25.12 releases.
 
 ### Bootloader and Image Format
 MT7986 Filogic uses a U-Boot FIT architecture reading a kernel + rootfs FIT image from a UBI volume. Attempts to package firmware as `sysupgrade-tar` fail to boot on standard U-Boot. This project maintains the official `sysupgrade.itb` and `recovery.itb` image definitions.

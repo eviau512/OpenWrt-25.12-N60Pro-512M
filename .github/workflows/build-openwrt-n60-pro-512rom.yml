@@ -6,7 +6,7 @@ on:
       openwrt_ref:
         description: "OpenWrt Git Tag or Branch to build"
         required: true
-        default: "v25.12.5"
+        default: "v25.12.6"
         type: string
       include_passwall:
         description: "Pre-install PassWall + Sing-Box from SourceForge"
@@ -31,7 +31,7 @@ concurrency:
 
 env:
   OPENWRT_REPO: https://github.com/openwrt/openwrt.git
-  OPENWRT_REF: ${{ github.event.inputs.openwrt_ref || 'v25.12.5' }}
+  OPENWRT_REF: ${{ github.event.inputs.openwrt_ref || 'v25.12.6' }}
   INCLUDE_PASSWALL: ${{ github.event.inputs.include_passwall != 'false' }}
   CONFIG_FILE: configs/netcore_n60-pro-512rom.config
   PATCH_FILE: patches/0001-mediatek-filogic-add-netcore-n60-pro-512rom.patch

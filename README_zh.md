@@ -2,7 +2,7 @@
 
 [English](README.md) | [中文](README_zh.md)
 
-本项目提供磊科 Netcore N60 Pro 路由器（硬件改装 512MB SPI-NAND 闪存）适配 OpenWrt 25.12.x 版本的构建配置与工作流，兼容 `v25.12.1`、`v25.12.2`、`v25.12.3`、`v25.12.4`、`v25.12.5` 及 `openwrt-25.12` 分支。
+本项目提供磊科 Netcore N60 Pro 路由器（硬件改装 512MB SPI-NAND 闪存）适配 OpenWrt 25.12.x 版本的构建配置与工作流，兼容 `v25.12.1`、`v25.12.2`、`v25.12.3`、`v25.12.4`、`v25.12.5`、`v25.12.6` 及 `openwrt-25.12` 分支。
 
 ---
 
@@ -15,14 +15,14 @@
 - **VPN 与组网**：内置 WireGuard（`kmod-wireguard`、`wireguard-tools`）与 Tailscale snapshot 最新版（v1.102.3，已开启 Taildrop）。
 - **USB 与打印服务**：内置 `kmod-usb-printer` 驱动与 `p910nd` 网络打印机共享服务（附 LuCI 控制面板）。
 - **网桥加速**：预装并默认启用 `bridger`（基于 eBPF/tc 的桥接数据流加速服务），优化有线/无线桥接转发效率并支持 Dumb AP 模式下的 WED 硬件加速。
-- **官方 kmod 驱动兼容**：内核 Vermagic 对齐官方 OpenWrt 25.12.5 发布哈希（`5a6c1f71be683ae9980b15d3ce73e24d`），预置官方 kmods 仓库，可直接使用 `apk add kmod-*` 在线安装任意官方内核驱动。
+- **官方 kmod 驱动兼容**：内核 Vermagic 对齐官方 OpenWrt 25.12.6 发布哈希（`f0a7348f9cb959e1bf4d0447669b031e`），预置官方 kmods 仓库，可直接使用 `apk add kmod-*` 在线安装任意官方内核驱动。
 
 ---
 
 ## 适配说明
 
 ### 25.12.3+ 上游变更
-官方在 `v25.12.3` 及后续版本中增加了新的 Filogic 设备，导致原补丁由于上下文行偏移而无法应用。本项目补丁使用 `netcore,n60` 和 `netcore,n60-pro` 作为锚点，可直接应用于 25.12 全系列。
+官方在 `v25.12.3` 及后续版本中增加了新的 Filogic 设备，导致原补丁由于上下文行偏移而无法应用。本项目补丁使用 `netcore,n60` 和 `netcore,n60-pro` 作为锚点，可直接应用于 25.12 全系列（含 `v25.12.6`）。
 
 ### 镜像格式与引导流程
 MediaTek MT7986 平台使用 UBI + FIT 结构引导（从 UBI 卷读取 Kernel + RootFS FIT 镜像）。将固件打包为 `sysupgrade-tar` 会导致无法启动。本项目保持官方标准的 `sysupgrade.itb` 与 `recovery.itb` 规则。
